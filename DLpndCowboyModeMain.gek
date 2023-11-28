@@ -1,0 +1,22 @@
+scn DLpndCowboyModeMain
+
+begin Function{}
+    if GetGameLoaded
+
+        ; Using PlaceAtMe creates persistent refs, so its better to make a non save baked TempCloneForm
+        ref rClonedTumbleweed = TempCloneForm TumbleweedNV
+
+        ; Giving it an EditorID so we can look it up in the Event Handler
+        SetEditorID rClonedTumbleweed "ClonedTumbleweedNV"
+
+        ; We know what the config file looks like, so grabbing keys directly
+        Player.AuxVarSetFLT "MustHaveCowboyPerk" (#(GetINISection "Character" "DLpnd\CowboySettings.ini")["MustHaveCowboyPerk"])
+        Player.AuxVarSetFLT "MustHaveCowboyWeapon" (#(GetINISection "Character" "DLpnd\CowboySettings.ini")["MustHaveCowboyWeapon"])
+        Player.AuxVarSetFLT "MustHaveWildWasteland" (#(GetINISection "Character" "DLpnd\CowboySettings.ini")["MustHaveWildWasteland"])
+        Player.AuxVarSetFLT "JumpDistance" (#(GetINISection "Gameplay" "DLpnd\CowboySettings.ini")["JumpDistance"])
+        Player.AuxVarSetFLT "TumbleweedPushForce" (#(GetINISection "Gameplay" "DLpnd\CowboySettings.ini")["TumbleweedPushForce"])
+
+        SetEventHandler "OnStartCombat" DLpndCowboyModeEvent
+        SetEventHandler "OnCombatEnd" DLpndCowboyModeClean
+    endif
+end

@@ -1,0 +1,55 @@
+scn DLpndCowboyModeEvent
+
+begin Function{ref rTarget, ref rStarter}
+    if eval ((Player.AuxVarGetFLT "MustHaveCowboyPerk") && !(Player.HasPerk Cowboy))
+        return
+    endif
+
+    if eval ((Player.AuxVarGetFLT "MustHaveWildWasteland") && !(Player.HasPerk WildWasteland))
+        return
+    endif
+
+    if eval ((Player.AuxVarGetFLT "MustHaveCowboyWeapon") && !(Player.IsWeaponInList PerkCowboyWeapons))
+        return
+    endif
+
+    if eval ((Player.AuxVarGetFLT "iRunEventOnce") == 0) && (rStarter == Player)
+        ; We don't want to spawn another Tumbleweed until previous one was cleaned up
+        Player.AuxVarSetFLT "iRunEventOnce" 1
+
+        ; Create the Temp Cloned Tumbleweed
+        ; If we Save/Load before the Cleanup event fires, the destruction of this temp will clean the references
+        ; So this will prevent memory leaks, and funny markfordelete on references that are not in the memory anymore.
+        ref rTumbleweed = Player.PlaceAtMe (EditorIDToFormID "ClonedTumbleweedNV") 1
+
+        ; Pass the reference id to the cleanup event handler
+        Player.AuxVarSetRef "rTumbleweed" rTumbleweed
+        Player.PushActorNoRagdoll (Player.AuxVarGetFLT "JumpDistance") (Player.GetAngle z)
+
+        ; Need a half a second delay while the Tumbleweed is spawning in the game world
+        CallAfterSeconds 0.5 (begin function {}
+
+            let float PA = Player.GetAngle z
+
+            ; Make the Tumbleweed really heavy, and sticky to the ground
+            ; Otherwise Havok makes the roll path unpredictable
+            rTumbleweed.SetCollisionObjProperty "TumbleweedNV" 0 100
+            rTumbleweed.SetCollisionObjProperty "TumbleweedNV" 7 500
+
+            ; Move the tumbleweed to the left side of the view port of the player
+            rTumbleweed.SetPos x ((cos(PA + 15) * -300) + (Player.GetPos x))
+            rTumbleweed.SetPos y ((sin(PA + 15) * 300) + (Player.GetPos y))
+
+            ; Spawn it 100 units above where the player is standing to clear curbs, holes, and rocks
+            rTumbleweed.SetPos z ((Player.GetPos z) + 100)
+            rTumbleweed.SetAngle z PA
+        end)
+
+        ; Apply force for 2 seconds, applying force for 1 frame doesn't seem to do anything
+        CallForSeconds 2 (begin function {}
+            rTumbleweed.PushObject (cos(PA) * -150) (sin(PA) * 150) 0 (Player.AuxVarGetFLT "TumbleweedPushForce")
+        end)
+
+        PlaySound WPNPistolMysteryEquip
+    endif
+end
