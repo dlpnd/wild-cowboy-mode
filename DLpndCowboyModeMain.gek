@@ -10,11 +10,13 @@ begin Function{}
         SetEditorID rClonedTumbleweed "ClonedTumbleweedNV"
 
         ; We know what the config file looks like, so grabbing keys directly
-        Player.AuxVarSetFLT "MustHaveCowboyPerk" (#(GetINISection "Character" "DLpnd\CowboySettings.ini")["MustHaveCowboyPerk"])
-        Player.AuxVarSetFLT "MustHaveCowboyWeapon" (#(GetINISection "Character" "DLpnd\CowboySettings.ini")["MustHaveCowboyWeapon"])
-        Player.AuxVarSetFLT "MustHaveWildWasteland" (#(GetINISection "Character" "DLpnd\CowboySettings.ini")["MustHaveWildWasteland"])
-        Player.AuxVarSetFLT "JumpDistance" (#(GetINISection "Gameplay" "DLpnd\CowboySettings.ini")["JumpDistance"])
-        Player.AuxVarSetFLT "TumbleweedPushForce" (#(GetINISection "Gameplay" "DLpnd\CowboySettings.ini")["TumbleweedPushForce"])
+        array_var config = GetINISection "Character" "DLpnd\CowboySettings.ini" 1
+
+        Player.AuxVarSetFLT "*MustHaveCowboyPerk" (config["MustHaveCowboyPerk"])
+        Player.AuxVarSetFLT "*MustHaveCowboyWeapon" (config["MustHaveCowboyWeapon"])
+        Player.AuxVarSetFLT "*MustHaveWildWasteland" (config["MustHaveWildWasteland"])
+        Player.AuxVarSetFLT "*JumpDistance" (config["JumpDistance"])
+        Player.AuxVarSetFLT "*TumbleweedPushForce" (config["TumbleweedPushForce"])
 
         SetEventHandler "OnStartCombat" DLpndCowboyModeEvent
         SetEventHandler "OnCombatEnd" DLpndCowboyModeClean

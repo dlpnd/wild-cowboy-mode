@@ -1,12 +1,12 @@
 scn DLpndCowboyModeClean
 
 begin Function{ref rTarget, ref rEnder}
-    if eval ((Player.AuxVarGetFLT "iRunEventOnce") == 1) && (rEnder != Player)
+    if eval ((Player.AuxVarGetFLT "*iRunEventOnce") == 1) && (rEnder != Player)
         ; Once we get Combat Over event, we check if a Tumbleweed has been created
-        Player.AuxVarSetFLT "iRunEventOnce" 0
+        Player.AuxVarSetFLT "*iRunEventOnce" 0
 
         ; Grab the reference id for cleanup
-        ref rTumbleweed = Player.AuxVarGetRef "rTumbleweed"
+        ref rTumbleweed = Player.AuxVarGetRef "*rTumbleweed"
 
         ; Yeet it out of the gameworld
         rTumbleweed.Disable
