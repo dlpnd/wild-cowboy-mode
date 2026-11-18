@@ -5,11 +5,8 @@ begin Function{ref rTarget, ref rEnder}
         ; Once we get Combat Over event, we check if a Tumbleweed has been created
         Player.AuxVarSetFLT "*iRunEventOnce" 0
 
-        ; Grab the reference id for cleanup
-        ref rTumbleweed = Player.AuxVarGetRef "*rTumbleweed"
-
         ; Yeet it out of the gameworld
-        rTumbleweed.Disable
-        rTumbleweed.MarkForDelete
+        rTumbleweedREF.Disable
+        rTumbleweedREF.MarkForDelete
     endif
 end
